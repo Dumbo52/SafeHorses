@@ -1,0 +1,28 @@
+name: SafeHorses
+main: com.michaelelin.SafeHorses.SafeHorsesPlugin
+version: ${project.version}
+description: ${project.description}
+website: ${project.url}
+database: true
+authors: [Dumbo52]
+permissions:
+  safehorses.*:
+    description: Gives access to all SafeHorses commands/options
+    children:
+      safehorses.spawn: true
+      safehorses.info: true
+      safehorses.appearance: true
+      safehorses.rename: true
+  safehorses.spawn:
+    description: Allows players to spawn their own horses.
+  safehorses.info:
+    description: Gives information about the owner of someone else's horse when right-clicking it.
+  safehorses.appearance:
+    description: Allows players to change their horse's appearance.
+  safehorses.rename:
+    description: Allows players to rename their horses.
+    
+commands:
+  horse:
+    description: SafeHorses commands
+    usage: /<command> help
