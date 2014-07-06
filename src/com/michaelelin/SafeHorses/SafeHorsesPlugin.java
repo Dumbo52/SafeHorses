@@ -51,28 +51,65 @@ public class SafeHorsesPlugin extends JavaPlugin {
                     }
 
                     if (args[0].equalsIgnoreCase("despawn")) {
-                        if (horseRegistry.removeSafeHorse(player, false)) {
-                            message(player, "Horse despawned.");
+                        if (args.length > 1 && player.hasPermission("safehorses.other.despawn")) {
+                            Player target = getServer().getPlayer(args[1]);
+                            String tName = target == null ? args[1] : target.getName();
+                            if (target != null && horseRegistry.removeSafeHorse(target, false)) {
+                                message(player, tName + "'s horse despawned.");
+                            }
+                            else {
+                                message(player, tName + " doesn't have a horse to despawn.");
+                            }
                         }
                         else {
-                            message(player, "You don't have a horse to despawn.");
+                            if (horseRegistry.removeSafeHorse(player, false)) {
+                                message(player, "Horse despawned.");
+                            }
+                            else {
+                                message(player, "You don't have a horse to despawn.");
+                            }
                         }
                         return true;
                     }
 
                     if (args[0].equalsIgnoreCase("clear")) {
-                        horseRegistry.removeSafeHorse(player, true);
-                        message(player, "Horse data cleared.");
+                        if (args.length > 1 && player.hasPermission("safehorses.other.clear")) {
+                            Player target = getServer().getPlayer(args[1]);
+                            String tName = target == null ? args[1] : target.getName();
+                            if (target == null) {
+                                getDatabase().delete(getDatabase().find(SafeHorseBean.class).where().eq("owner", tName).query().findList());
+                            }
+                            else {
+                                horseRegistry.removeSafeHorse(target, true);
+                            }
+                            message(player, tName + "'s horse data cleared.");
+                        }
+                        else {
+                            horseRegistry.removeSafeHorse(player, true);
+                            message(player, "Horse data cleared.");
+                        }
                         return true;
                     }
 
                     if (args[0].equalsIgnoreCase("call") || args[0].equalsIgnoreCase("tp")) {
-                        if (horseRegistry.hasSafeHorse(player)) {
-                            horseRegistry.getSafeHorse(player).teleport(player);
-                            player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
+                        if (args.length > 1 && player.hasPermission("safehorses.other.call")) {
+                            Player target = getServer().getPlayer(args[1]);
+                            String tName = target == null ? args[1] : target.getName();
+                            if (target != null && horseRegistry.hasSafeHorse(target)) {
+                                horseRegistry.getSafeHorse(target).teleport(player);
+                            }
+                            else {
+                                message(player, tName + " does not have a horse currently spawned.");
+                            }
                         }
                         else {
-                            message(player, "You don't have a horse currently spawned. Try " + ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.GREEN + ".");
+                            if (horseRegistry.hasSafeHorse(player)) {
+                                horseRegistry.getSafeHorse(player).teleport(player);
+                                player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
+                            }
+                            else {
+                                message(player, "You don't have a horse currently spawned. Try " + ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.GREEN + ".");
+                            }
                         }
                         return true;
                     }

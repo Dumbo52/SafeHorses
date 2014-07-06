@@ -2,14 +2,17 @@ package com.michaelelin.SafeHorses;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class SafeHorsesListener implements Listener {
 
@@ -52,4 +55,17 @@ public class SafeHorsesListener implements Listener {
             plugin.horseRegistry.removeSafeHorse(event.getPlayer(), false);
         }
     }
+    
+    @EventHandler
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        for (Entity e : event.getChunk().getEntities()) {
+            if (e.getType() == EntityType.HORSE) {
+                Horse horse = (Horse) e;
+                if (plugin.horseRegistry.isSafeHorse(horse)) {
+                    plugin.horseRegistry.removeSafeHorse((Player) horse.getOwner(), false);
+                }
+            }
+        }
+    }
+    
 }

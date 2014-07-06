@@ -53,7 +53,7 @@ public class HorseRegistry {
         Horse horse = registry.remove(player);
         if (plugin.KEEP_STATE) {
             plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList());
-            if (!clear) {
+            if (!clear && horse != null) {
                 plugin.getDatabase().save(toBean(horse));
             }
         }

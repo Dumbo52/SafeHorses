@@ -13,6 +13,7 @@ permissions:
       safehorses.info: true
       safehorses.appearance: true
       safehorses.rename: true
+      safehorses.other.*: true
   safehorses.spawn:
     description: Allows players to spawn their own horses.
   safehorses.info:
@@ -21,7 +22,18 @@ permissions:
     description: Allows players to change their horse's appearance.
   safehorses.rename:
     description: Allows players to rename their horses.
-    
+  safehorses.other.*:
+    description: Allows players to modify other players' horses.
+    children:
+      safehorses.other.despawn: true
+      safehorses.other.clear: true
+      safehorses.other.call: true
+  safehorses.other.despawn:
+    description: Allows players to despawn other players' horses.
+  safehorses.other.clear:
+    description: Allows players to clear other players' horse data.
+  safehorses.other.call:
+    description: Allows players to teleport other players' horses to them.
 commands:
   horse:
     description: SafeHorses commands
