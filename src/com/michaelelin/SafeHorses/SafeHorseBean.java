@@ -23,6 +23,8 @@ public class SafeHorseBean {
     private int saddle;
     private int armor;
     private int age;
+    private int speed;
+    private int jump;
 
     public int getId() {
         return this.id;
@@ -94,6 +96,22 @@ public class SafeHorseBean {
 
     public void setAge(int age) {
         this.age = age;
+    }
+    
+    public int getSpeed() {
+        return speed;
+    }
+    
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+    
+    public int getJump() {
+        return jump;
+    }
+    
+    public void setJump(int jump) {
+        this.jump = jump;
     }
 
 }
