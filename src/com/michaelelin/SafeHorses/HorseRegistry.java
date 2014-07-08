@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.server.v1_7_R3.Entity;
 import net.minecraft.server.v1_7_R3.GenericAttributes;
-
+import org.bukkit.craftbukkit.v1_7_R3.CraftChunk;
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
@@ -54,7 +55,6 @@ public class HorseRegistry {
 
     public boolean removeSafeHorse(Player player, boolean clear) {
         Horse horse = registry.remove(player);
-        System.out.println("Speed: " + ((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).getValue());
         if (plugin.KEEP_STATE) {
             plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList());
             if (!clear && horse != null) {
@@ -63,6 +63,14 @@ public class HorseRegistry {
         }
         if (horse != null) {
             horse.remove();
+            // Apparently it's sometimes necessary to remove the entity manually upon restarts.
+            Entity entity = ((CraftHorse) horse).getHandle();
+            List[] list = ((CraftChunk) horse.getWorld().getChunkAt(horse.getLocation())).getHandle().entitySlices;
+            for (int i = 0; i < list.length; i++) {
+                if (list[i].contains(entity)) {
+                    list[i].remove(entity);
+                }
+            }
         }
         return horse != null;
     }
@@ -96,7 +104,7 @@ public class HorseRegistry {
         bean.setSaddle(horse.getInventory().getSaddle() == null ? 0 : horse.getInventory().getSaddle().getTypeId());
         bean.setArmor(horse.getInventory().getArmor() == null ? 0 : horse.getInventory().getArmor().getTypeId());
         bean.setAge(horse.getAge());
-        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).getValue() * 10000));
+        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).b() * 10000));
         bean.setJump((int) (horse.getJumpStrength() * 10000));
         return bean;
     }
