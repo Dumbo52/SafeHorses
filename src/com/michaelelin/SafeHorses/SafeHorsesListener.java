@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 public class SafeHorsesListener implements Listener {
@@ -53,6 +54,20 @@ public class SafeHorsesListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.horseRegistry.hasSafeHorse(event.getPlayer())) {
             plugin.horseRegistry.removeSafeHorse(event.getPlayer(), false);
+        }
+    }
+    
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        for (Entity e : event.getChunk().getEntities()) {
+            if (e.getType() == EntityType.HORSE) {
+                // Clean up "stray" horses that were created by the plugin
+                // but somehow weren't removed
+                Horse horse = (Horse) e;
+                if (horse.getMaxHealth() == 1 && !plugin.horseRegistry.isSafeHorse(horse)) {
+                    horse.remove();
+                }
+            }
         }
     }
     

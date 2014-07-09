@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.server.v1_7_R3.Entity;
 import net.minecraft.server.v1_7_R3.GenericAttributes;
-import org.bukkit.craftbukkit.v1_7_R3.CraftChunk;
+
 import org.bukkit.craftbukkit.v1_7_R3.entity.CraftHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
@@ -42,6 +41,10 @@ public class HorseRegistry {
         horse.setAgeLock(plugin.LOCK_AGE);
         horse.setCustomNameVisible(plugin.VISIBLE_NAMES);
         horse.setBreed(false);
+        horse.getUniqueId();
+        // Bukkit metadata doesn't persist for some reason, so we
+        // have to get inventive.
+        horse.setMaxHealth(1);
         if (plugin.KEEP_STATE) {
             List<SafeHorseBean> matches = plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList();
             if (matches.isEmpty()) {
@@ -63,14 +66,6 @@ public class HorseRegistry {
         }
         if (horse != null) {
             horse.remove();
-            // Apparently it's sometimes necessary to remove the entity manually upon restarts.
-            Entity entity = ((CraftHorse) horse).getHandle();
-            List[] list = ((CraftChunk) horse.getWorld().getChunkAt(horse.getLocation())).getHandle().entitySlices;
-            for (int i = 0; i < list.length; i++) {
-                if (list[i].contains(entity)) {
-                    list[i].remove(entity);
-                }
-            }
         }
         return horse != null;
     }
