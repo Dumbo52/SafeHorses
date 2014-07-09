@@ -113,6 +113,36 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         }
                         return true;
                     }
+                    
+                    if (args[0].equalsIgnoreCase("neigh")) {
+                        if (player.hasPermission("safehorses.neigh")) {
+                            if (horseRegistry.hasSafeHorse(player)) {
+                                Horse horse = horseRegistry.getSafeHorse(player);
+                                Sound sound;
+                                switch (horse.getVariant()) {
+                                case DONKEY:
+                                    sound = Sound.DONKEY_DEATH;
+                                    break;
+                                case UNDEAD_HORSE:
+                                    sound = Sound.HORSE_ZOMBIE_DEATH;
+                                    break;
+                                case SKELETON_HORSE:
+                                    sound = Sound.HORSE_SKELETON_DEATH;
+                                    break;
+                                default:
+                                    sound = Sound.HORSE_DEATH;
+                                    break;
+                                }
+                                horse.getWorld().playSound(horse.getLocation(), sound, 1, (float) Math.random() * 0.4F + 0.4F);
+                            }
+                            else {
+                                message(player, "You don't have a horse currently spawned. Try " + ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.GREEN + ".");
+                            }
+                        }
+                        else {
+                            message(player, "You don't have permission to run that command.");
+                        }
+                    }
 
                     if (args[0].equalsIgnoreCase("variant")) {
                         if (player.hasPermission("safehorses.appearance")) {
@@ -195,6 +225,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse despawn" + ChatColor.RESET + " - saves and despawns your current horse.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse clear" + ChatColor.RESET + " - clears your horse's data.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse call" + ChatColor.RESET + " - teleports your horse to your location.");
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse neigh" + ChatColor.RESET + " - makes your horse neigh (or something to that effect).");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse variant [variant]" + ChatColor.RESET + " - sets your horse to the specified variant.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse color [color]" + ChatColor.RESET + " - sets your horse to the specified color.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse style [style]" + ChatColor.RESET + " - sets your horse to the specified style.");

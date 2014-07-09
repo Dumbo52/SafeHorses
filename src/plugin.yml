@@ -22,6 +22,8 @@ permissions:
     description: Allows players to change their horse's appearance.
   safehorses.rename:
     description: Allows players to rename their horses.
+  safehorses.neigh:
+    description: Allows players to make their horses neigh.
   safehorses.other.*:
     description: Allows players to modify other players' horses.
     children:
