@@ -38,7 +38,8 @@ public class SafeHorsesPlugin extends JavaPlugin {
                     if (args[0].equalsIgnoreCase("spawn")) {
                         if (player.hasPermission("safehorses.spawn")) {
                             if (horseRegistry.hasSafeHorse(player)) {
-                                message(player, "You already have a horse spawned. Use " + ChatColor.LIGHT_PURPLE + "/horse call" + ChatColor.GREEN + " instead.");
+                                horseRegistry.getSafeHorse(player).teleport(player);
+                                player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
                             }
                             else {
                                 horseRegistry.registerSafeHorse(player, player.getWorld().spawn(player.getLocation(), Horse.class));
@@ -108,7 +109,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                                 player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
                             }
                             else {
-                                message(player, "You don't have a horse currently spawned. Try " + ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.GREEN + ".");
+                                horseRegistry.registerSafeHorse(player, player.getWorld().spawn(player.getLocation(), Horse.class));
                             }
                         }
                         return true;
@@ -142,6 +143,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         else {
                             message(player, "You don't have permission to run that command.");
                         }
+                        return true;
                     }
 
                     if (args[0].equalsIgnoreCase("variant")) {
