@@ -35,14 +35,23 @@ public class SafeHorsesPlugin extends JavaPlugin {
                 Player player = (Player) sender;
                 if (args.length > 0) {
 
-                    if (args[0].equalsIgnoreCase("spawn")) {
+                    if (args[0].equalsIgnoreCase("spawn") || args[0].equalsIgnoreCase("call")) {
                         if (player.hasPermission("safehorses.spawn")) {
-                            if (horseRegistry.hasSafeHorse(player)) {
-                                horseRegistry.getSafeHorse(player).teleport(player);
-                                player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
+                            Player target = player;
+                            if (args.length > 1 && player.hasPermission("safehorses.other.spawn")) {
+                                target = getServer().getPlayer(args[1]);
+                            }
+                            if (target == null) {
+                                message(player, "That player isn't online.");
                             }
                             else {
-                                horseRegistry.registerSafeHorse(player, player.getWorld().spawn(player.getLocation(), Horse.class));
+                                if (horseRegistry.hasSafeHorse(target)) {
+                                    horseRegistry.getSafeHorse(target).teleport(player);
+                                    player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
+                                }
+                                else {
+                                    horseRegistry.registerSafeHorse(target, player.getWorld().spawn(player.getLocation(), Horse.class));
+                                }
                             }
                         }
                         else {
@@ -88,29 +97,6 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         else {
                             horseRegistry.removeSafeHorse(player, true);
                             message(player, "Horse data cleared.");
-                        }
-                        return true;
-                    }
-
-                    if (args[0].equalsIgnoreCase("call") || args[0].equalsIgnoreCase("tp")) {
-                        if (args.length > 1 && player.hasPermission("safehorses.other.call")) {
-                            Player target = getServer().getPlayer(args[1]);
-                            String tName = target == null ? args[1] : target.getName();
-                            if (target != null && horseRegistry.hasSafeHorse(target)) {
-                                horseRegistry.getSafeHorse(target).teleport(player);
-                            }
-                            else {
-                                message(player, tName + " does not have a horse currently spawned.");
-                            }
-                        }
-                        else {
-                            if (horseRegistry.hasSafeHorse(player)) {
-                                horseRegistry.getSafeHorse(player).teleport(player);
-                                player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
-                            }
-                            else {
-                                horseRegistry.registerSafeHorse(player, player.getWorld().spawn(player.getLocation(), Horse.class));
-                            }
                         }
                         return true;
                     }
@@ -226,7 +212,6 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.RESET + " - spawns your horse at your location.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse despawn" + ChatColor.RESET + " - saves and despawns your current horse.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse clear" + ChatColor.RESET + " - clears your horse's data.");
-                        sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse call" + ChatColor.RESET + " - teleports your horse to your location.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse neigh" + ChatColor.RESET + " - makes your horse neigh (or something to that effect).");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse variant [variant]" + ChatColor.RESET + " - sets your horse to the specified variant.");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse color [color]" + ChatColor.RESET + " - sets your horse to the specified color.");

@@ -28,15 +28,15 @@ permissions:
   safehorses.other.*:
     description: Allows players to modify other players' horses.
     children:
+      safehorses.other.spawn: true
       safehorses.other.despawn: true
       safehorses.other.clear: true
-      safehorses.other.call: true
+  safehorses.other.spawn:
+    description: Allows players to spawn other players' horses.
   safehorses.other.despawn:
     description: Allows players to despawn other players' horses.
   safehorses.other.clear:
     description: Allows players to clear other players' horse data.
-  safehorses.other.call:
-    description: Allows players to teleport other players' horses to them.
 commands:
   horse:
     description: SafeHorses commands
