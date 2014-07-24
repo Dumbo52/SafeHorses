@@ -13,6 +13,7 @@ permissions:
       safehorses.info: true
       safehorses.appearance: true
       safehorses.rename: true
+      safehorses.neigh: true
       safehorses.other.*: true
   safehorses.spawn:
     description: Allows players to spawn their own horses.
