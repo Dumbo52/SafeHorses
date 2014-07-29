@@ -58,16 +58,17 @@ public class HorseRegistry {
 
     public boolean removeSafeHorse(Player player, boolean clear) {
         Horse horse = registry.remove(player);
-        if (plugin.KEEP_STATE) {
-            plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList());
-            if (!clear && horse != null) {
-                plugin.getDatabase().save(toBean(horse));
+        if (horse != null || clear) {
+            if (plugin.KEEP_STATE) {
+                plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList());
+                if (!clear && horse != null) {
+                    plugin.getDatabase().save(toBean(horse));
+                }
             }
-        }
-        if (horse != null) {
             horse.remove();
+            return true;
         }
-        return horse != null;
+        return false;
     }
 
     public void removeAllHorses() {
