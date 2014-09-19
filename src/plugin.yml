@@ -5,6 +5,7 @@ description: ${project.description}
 website: ${project.url}
 database: true
 authors: [Dumbo52]
+depend: [ProtocolLib]
 permissions:
   safehorses.*:
     description: Gives access to all SafeHorses commands/options

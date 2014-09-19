@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.michaelelin</groupId>
   <artifactId>SafeHorses</artifactId>
-  <version>0.1</version>
+  <version>0.1.1-SNAPSHOT</version>
   <name>SafeHorses</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -35,9 +35,9 @@
       <version>1.7.9-R0.1</version>
     </dependency>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>craftbukkit</artifactId>
-      <version>1.7.9-R0.1</version>
+    	<groupId>com.comphenix.protocol</groupId>
+    	<artifactId>ProtocolLib</artifactId>
+    	<version>3.4.0</version>
     </dependency>
   </dependencies>
   <repositories>
