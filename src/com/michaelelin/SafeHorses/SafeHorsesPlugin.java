@@ -256,6 +256,14 @@ public class SafeHorsesPlugin extends JavaPlugin {
     public void setupDatabase() {
         try {
             getDatabase().find(SafeHorseBean.class).findRowCount();
+            List<SafeHorseBean> toUpdate = getDatabase().find(SafeHorseBean.class).where().not(getDatabase().getExpressionFactory().like("owner", "%-%-%-%-%")).findList();
+            if (!toUpdate.isEmpty()) {
+                for (SafeHorseBean row : toUpdate) {
+                    row.setOwner(getServer().getOfflinePlayer(row.getOwner()).getUniqueId().toString());
+                    getDatabase().update(row);
+                }
+                log.info("[" + getDescription().getName() + "] " + toUpdate.size() + " entries updated to use player UUIDs");
+            }
         } catch (PersistenceException e) {
             log.info("Installing " + getDescription().getName() + " database.");
             installDDL();

@@ -48,7 +48,7 @@ public class HorseRegistry {
         // have to get inventive.
         horse.setMaxHealth(1);
         if (plugin.KEEP_STATE) {
-            List<SafeHorseBean> matches = plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList();
+            List<SafeHorseBean> matches = plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getUniqueId().toString()).query().findList();
             if (matches.isEmpty()) {
                 horse.setCustomName(player.getName() + "'s Horse");
             }
@@ -62,7 +62,7 @@ public class HorseRegistry {
         Horse horse = registry.remove(player);
         if (horse != null || clear) {
             if (plugin.KEEP_STATE) {
-                plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getName()).query().findList());
+                plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getUniqueId().toString()).query().findList());
                 if (!clear && horse != null) {
                     plugin.getDatabase().save(toBean(horse));
                 }
@@ -102,7 +102,7 @@ public class HorseRegistry {
 
     public SafeHorseBean toBean(Horse horse) {
         SafeHorseBean bean = new SafeHorseBean();
-        bean.setOwner(horse.getOwner().getName());
+        bean.setOwner(horse.getOwner().getUniqueId().toString());
         bean.setName(horse.getCustomName());
         bean.setVariant(horse.getVariant().ordinal());
         bean.setColor(horse.getColor().ordinal());
