@@ -4,17 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import net.minecraft.server.v1_7_R3.GenericAttributes;
+import net.minecraft.server.v1_8_R1.GenericAttributes;
 
-//import org.bukkit.craftbukkit.v1_7_R3.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_8_R1.entity.CraftHorse;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Horse.Color;
-import org.bukkit.entity.Horse.Style;
-import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import com.comphenix.protocol.utility.MinecraftReflection;
 
 public class HorseRegistry {
 
@@ -82,21 +77,13 @@ public class HorseRegistry {
 
     public static void applyBean(Horse horse, SafeHorseBean bean) {
         horse.setCustomName(bean.getName());
-        horse.setVariant(Variant.values()[bean.getVariant()]);
-        horse.setColor(Color.values()[bean.getColor()]);
-        horse.setStyle(Style.values()[bean.getStyle()]);
+        horse.setVariant(Horse.Variant.values()[bean.getVariant()]);
+        horse.setColor(Horse.Color.values()[bean.getColor()]);
+        horse.setStyle(Horse.Style.values()[bean.getStyle()]);
         horse.getInventory().setSaddle(new ItemStack(bean.getSaddle()));
         horse.getInventory().setArmor(new ItemStack(bean.getArmor()));
         horse.setAge(bean.getAge());
-        //((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).setValue(bean.getSpeed() / 10000.0);
-        try {
-            Class<?> craftHorse = MinecraftReflection.getCraftBukkitClass("entity.CraftHorse");
-            Object nmsHorse = craftHorse.getMethod("getHandle").invoke(craftHorse.cast(horse));
-            Object speedInstance = nmsHorse.getClass().getMethod("getAttributeInstance", MinecraftReflection.getMinecraftClass("IAttribute")).invoke(nmsHorse, MinecraftReflection.getMinecraftClass("GenericAttributes").getField("d").get(null));
-            speedInstance.getClass().getMethod("setValue", double.class).invoke(speedInstance, bean.getSpeed() / 10000.0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        ((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).setValue(bean.getSpeed() / 10000.0);
         horse.setJumpStrength(bean.getJump() / 10000.0);
     }
 
@@ -110,17 +97,7 @@ public class HorseRegistry {
         bean.setSaddle(horse.getInventory().getSaddle() == null ? 0 : horse.getInventory().getSaddle().getTypeId());
         bean.setArmor(horse.getInventory().getArmor() == null ? 0 : horse.getInventory().getArmor().getTypeId());
         bean.setAge(horse.getAge());
-        //bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).b() * 10000));
-        try {
-            Class<?> craftHorse = MinecraftReflection.getCraftBukkitClass("entity.CraftHorse");
-            Object nmsHorse = craftHorse.getMethod("getHandle").invoke(craftHorse.cast(horse));
-            Object speedInstance = nmsHorse.getClass().getMethod("getAttributeInstance", MinecraftReflection.getMinecraftClass("IAttribute")).invoke(nmsHorse, MinecraftReflection.getMinecraftClass("GenericAttributes").getField("d").get(null));
-            bean.setSpeed((int) (double) speedInstance.getClass().getMethod("b").invoke(speedInstance) * 10000);
-        } catch (Exception e) {
-            e.printStackTrace();
-            SafeHorseBean dbBean = plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", bean.getOwner()).query().findUnique();
-            bean.setSpeed(dbBean == null ? 30000 : dbBean.getSpeed());
-        }
+        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).b() * 10000));
         bean.setJump((int) (horse.getJumpStrength() * 10000));
         return bean;
     }
