@@ -62,7 +62,9 @@ public class HorseRegistry {
                     plugin.getDatabase().save(toBean(horse));
                 }
             }
-            horse.remove();
+            if (horse != null) {
+                horse.remove();
+            }
             return true;
         }
         return false;
