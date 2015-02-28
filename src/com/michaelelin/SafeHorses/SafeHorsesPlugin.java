@@ -23,6 +23,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
     public boolean KEEP_STATE;
     public boolean LOCK_AGE;
     public boolean VISIBLE_NAMES;
+    public boolean MIGRATE_UUIDS;
 
     public HorseRegistry horseRegistry;
 
@@ -238,9 +239,10 @@ public class SafeHorsesPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        KEEP_STATE = getConfig().getBoolean("keep-state");
-        LOCK_AGE = getConfig().getBoolean("lock-age");
-        VISIBLE_NAMES = getConfig().getBoolean("visible-names");
+        KEEP_STATE = getConfig().getBoolean("keep-state", true);
+        LOCK_AGE = getConfig().getBoolean("lock-age", true);
+        VISIBLE_NAMES = getConfig().getBoolean("visible-names", true);
+        MIGRATE_UUIDS = getConfig().getBoolean("migrate-uuids", false);
         getServer().getPluginManager().registerEvents(new SafeHorsesListener(this), this);
         horseRegistry = new HorseRegistry(this);
         setupDatabase();
@@ -256,13 +258,15 @@ public class SafeHorsesPlugin extends JavaPlugin {
     public void setupDatabase() {
         try {
             getDatabase().find(SafeHorseBean.class).findRowCount();
-            List<SafeHorseBean> toUpdate = getDatabase().find(SafeHorseBean.class).where().not(getDatabase().getExpressionFactory().like("owner", "%-%-%-%-%")).findList();
-            if (!toUpdate.isEmpty()) {
-                for (SafeHorseBean row : toUpdate) {
-                    row.setOwner(getServer().getOfflinePlayer(row.getOwner()).getUniqueId().toString());
-                    getDatabase().update(row);
+            if (MIGRATE_UUIDS) {
+                List<SafeHorseBean> toUpdate = getDatabase().find(SafeHorseBean.class).where().not(getDatabase().getExpressionFactory().like("owner", "%-%-%-%-%")).findList();
+                if (!toUpdate.isEmpty()) {
+                    for (SafeHorseBean row : toUpdate) {
+                        row.setOwner(getServer().getOfflinePlayer(row.getOwner()).getUniqueId().toString());
+                        getDatabase().update(row);
+                    }
+                    log.info("[" + getDescription().getName() + "] " + toUpdate.size() + " entries updated to use player UUIDs");
                 }
-                log.info("[" + getDescription().getName() + "] " + toUpdate.size() + " entries updated to use player UUIDs");
             }
         } catch (PersistenceException e) {
             log.info("Installing " + getDescription().getName() + " database.");

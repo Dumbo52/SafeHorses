@@ -2,3 +2,4 @@ keep-state: true
 lock-age: true
 visible-names: true
 allow-rename: true
+migrate-uuids: false
