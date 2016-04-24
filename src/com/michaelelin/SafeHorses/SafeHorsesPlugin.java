@@ -48,7 +48,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                             else {
                                 if (horseRegistry.hasSafeHorse(target)) {
                                     horseRegistry.getSafeHorse(target).teleport(player);
-                                    player.playSound(player.getLocation(), Sound.HORSE_GALLOP, 1, 1);
+                                    player.playSound(player.getLocation(), Sound.ENTITY_HORSE_GALLOP, 1, 1);
                                 }
                                 else {
                                     horseRegistry.registerSafeHorse(target, player.getWorld().spawn(player.getLocation(), Horse.class));
@@ -101,7 +101,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         }
                         return true;
                     }
-                    
+
                     if (args[0].equalsIgnoreCase("neigh")) {
                         if (player.hasPermission("safehorses.neigh")) {
                             if (horseRegistry.hasSafeHorse(player)) {
@@ -109,16 +109,16 @@ public class SafeHorsesPlugin extends JavaPlugin {
                                 Sound sound;
                                 switch (horse.getVariant()) {
                                 case DONKEY:
-                                    sound = Sound.DONKEY_DEATH;
+                                    sound = Sound.ENTITY_DONKEY_DEATH;
                                     break;
                                 case UNDEAD_HORSE:
-                                    sound = Sound.HORSE_ZOMBIE_DEATH;
+                                    sound = Sound.ENTITY_ZOMBIE_HORSE_DEATH;
                                     break;
                                 case SKELETON_HORSE:
-                                    sound = Sound.HORSE_SKELETON_DEATH;
+                                    sound = Sound.ENTITY_SKELETON_HORSE_DEATH;
                                     break;
                                 default:
-                                    sound = Sound.HORSE_DEATH;
+                                    sound = Sound.ENTITY_HORSE_DEATH;
                                     break;
                                 }
                                 horse.getWorld().playSound(horse.getLocation(), sound, 1, (float) Math.random() * 0.4F + 0.4F);
@@ -157,7 +157,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         }
                         return true;
                     }
-                    
+
                     if (args[0].equalsIgnoreCase("color")) {
                         if (player.hasPermission("safehorses.appearance")) {
                             if (horseRegistry.hasSafeHorse(player)) {
@@ -182,7 +182,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         }
                         return true;
                     }
-                    
+
                     if (args[0].equalsIgnoreCase("style")) {
                         if (player.hasPermission("safehorses.appearance")) {
                             if (horseRegistry.hasSafeHorse(player)) {
@@ -207,7 +207,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         }
                         return true;
                     }
-                    
+
                     if (args[0].equalsIgnoreCase("help")) {
                         sender.sendMessage(ChatColor.GREEN.toString() + ChatColor.UNDERLINE.toString() + "SafeHorses Commands");
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse spawn" + ChatColor.RESET + " - spawns your horse at your location.");
@@ -219,7 +219,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "/horse style [style]" + ChatColor.RESET + " - sets your horse to the specified style.");
                         return true;
                     }
-                    
+
                 }
                 message(sender, "Unknown command. Type " + ChatColor.LIGHT_PURPLE + "/horse help" + ChatColor.GREEN + " for help.");
             }

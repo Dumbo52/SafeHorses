@@ -2,9 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.michaelelin</groupId>
   <artifactId>SafeHorses</artifactId>
-  <version>0.1.2</version>
+  <version>0.2.0</version>
   <name>SafeHorses</name>
   <build>
+    <defaultGoal>clean package</defaultGoal>
     <sourceDirectory>src</sourceDirectory>
     <resources>
       <resource>
@@ -31,24 +32,23 @@
   <dependencies>
     <dependency>
       <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.8-R0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.8-R0.1-SNAPSHOT</version>
+      <version>1.9-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-    	<groupId>com.comphenix.protocol</groupId>
-    	<artifactId>ProtocolLib</artifactId>
-    	<version>3.4.0</version>
+      <groupId>com.comphenix.protocol</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>4.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <repositories>
     <repository>
-      <id>bukkit-repo</id>
-      <url>http://repo.bukkit.org/content/groups/public</url>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>dmulloy2-repo</id>
+      <url>http://repo.dmulloy2.net/content/groups/public/</url>
     </repository>
   </repositories>
 </project>

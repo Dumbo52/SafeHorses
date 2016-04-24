@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.server.v1_8_R1.GenericAttributes;
+import net.minecraft.server.v1_9_R1.GenericAttributes;
 
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -85,7 +85,7 @@ public class HorseRegistry {
         horse.getInventory().setSaddle(new ItemStack(bean.getSaddle()));
         horse.getInventory().setArmor(new ItemStack(bean.getArmor()));
         horse.setAge(bean.getAge());
-        ((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).setValue(bean.getSpeed() / 10000.0);
+        ((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(bean.getSpeed() / 10000.0);
         horse.setJumpStrength(bean.getJump() / 10000.0);
     }
 
@@ -99,7 +99,7 @@ public class HorseRegistry {
         bean.setSaddle(horse.getInventory().getSaddle() == null ? 0 : horse.getInventory().getSaddle().getTypeId());
         bean.setArmor(horse.getInventory().getArmor() == null ? 0 : horse.getInventory().getArmor().getTypeId());
         bean.setAge(horse.getAge());
-        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.d).b() * 10000));
+        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).b() * 10000));
         bean.setJump((int) (horse.getJumpStrength() * 10000));
         return bean;
     }
