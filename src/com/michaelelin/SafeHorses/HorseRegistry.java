@@ -3,104 +3,153 @@ package com.michaelelin.SafeHorses;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-import net.minecraft.server.v1_9_R1.GenericAttributes;
+import net.minecraft.server.v1_11_R1.GenericAttributes;
 
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftHorse;
+import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * A registry of {@code SafeHorse}s for online players.
+ */
 public class HorseRegistry {
 
-    private Map<Player, Horse> registry = new HashMap<Player, Horse>();
+    /**
+     * Maps player UUIDs to {@code SafeHorse}s
+     */
+    private Map<UUID, SafeHorse> registry = new HashMap<UUID, SafeHorse>();
+
+    /**
+     * Maps horse entity UUIDs to {@code SafeHorse}s
+     */
+    private Map<UUID, SafeHorse> horses = new HashMap<UUID, SafeHorse>();
+
     private SafeHorsesPlugin plugin;
 
+    /**
+     * Creates a new {@code HorseRegistry}.
+     *
+     * @param plugin the SafeHorses plugin
+     */
     public HorseRegistry(SafeHorsesPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public Horse getSafeHorse(Player player) {
-        return registry.get(player);
+    /**
+     * Gets the {@code SafeHorse} instance from the given player.
+     *
+     * @param player the player
+     * @return the {@code SafeHorse} instance
+     */
+    public SafeHorse getSafeHorse(Player player) {
+        return registry.get(player.getUniqueId());
     }
 
+    /**
+     * Determines whether the given player currently has a horse spawned.
+     *
+     * @param player the player
+     * @return {@code true} if the player has a horse
+     */
     public boolean hasSafeHorse(Player player) {
-        return registry.containsKey(player);
+        return registry.containsKey(player.getUniqueId());
     }
 
-    public boolean isSafeHorse(Horse horse) {
-        return registry.containsValue(horse);
+    /**
+     * Determines whether the given horse entity is registered as a {@code SafeHorse}.
+     *
+     * @param instance the horse entity
+     * @return {@code true} if the horse is registered
+     */
+    public boolean isSafeHorse(AbstractHorse instance) {
+        return horses.containsKey(instance.getUniqueId());
     }
 
-    public void registerSafeHorse(Player player, Horse horse) {
-        registry.put(player, horse);
-        horse.setOwner(player);
-        horse.setAgeLock(plugin.LOCK_AGE);
-        horse.setCustomNameVisible(plugin.VISIBLE_NAMES);
-        horse.setBreed(false);
-        horse.getUniqueId();
-        // Bukkit metadata doesn't persist for some reason, so we
-        // have to get inventive.
-        horse.setMaxHealth(1);
-        if (plugin.KEEP_STATE) {
-            List<SafeHorseBean> matches = plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getUniqueId().toString()).query().findList();
-            if (matches.isEmpty()) {
-                horse.setCustomName(player.getName() + "'s Horse");
-            }
-            else {
-                applyBean(horse, matches.get(0));
+    /**
+     * Registeres a horse entity to a player as a new {@code SafeHorse}.
+     *
+     * @param player the player
+     * @param instance the horse entity
+     * @return the {@code SafeHorse}
+     */
+    public SafeHorse registerSafeHorse(Player player, AbstractHorse instance) {
+        SafeHorse horse = new SafeHorse(plugin, instance, player);
+        registry.put(player.getUniqueId(), horse);
+        horses.put(instance.getUniqueId(), horse);
+
+        if (plugin.getConfiguration().getKeepState()) {
+            List<SafeHorseBean> matches = plugin.getDatabase().find(SafeHorseBean.class).where()
+                    .eq("owner", player.getUniqueId().toString()).query().findList();
+            if (!matches.isEmpty()) {
+                horse.applyBean(matches.get(0));
             }
         }
+
+        return horse;
     }
 
+    /**
+     * Updates the registry to assign a new horse entity to a
+     * {@code SafeHorse}.
+     *
+     * @param fromHorse the {@code SafeHorse} instance
+     * @param toHorse the new horse entity
+     */
+    public void transferSafeHorse(SafeHorse fromHorse, AbstractHorse toHorse) {
+        horses.remove(fromHorse.getInstance().getUniqueId());
+        horses.put(toHorse.getUniqueId(), fromHorse);
+    }
+
+    /**
+     * Removes a {@code SafeHorse} from the registry, optionally clearing its
+     * data.
+     *
+     * @param player the player owning the horse to remove
+     * @param clear whether to clear the horse's data
+     * @return {@code true} if the horse was removed
+     */
     public boolean removeSafeHorse(Player player, boolean clear) {
-        Horse horse = registry.remove(player);
+        return removeSafeHorse(player.getUniqueId(), clear);
+    }
+
+    /**
+     * Removes a {@code SafeHorse} from the registry, optionally clearing its
+     * data.
+     *
+     * @param player the UUID of the player owning the horse to remove
+     * @param clear whether to clear the horse's data
+     * @return {@code true} if the horse was removed
+     */
+    public boolean removeSafeHorse(UUID player, boolean clear) {
+        SafeHorse horse = registry.remove(player);
         if (horse != null || clear) {
-            if (plugin.KEEP_STATE) {
-                plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where().eq("owner", player.getUniqueId().toString()).query().findList());
+            if (plugin.getConfiguration().getKeepState()) {
+                plugin.getDatabase().delete(plugin.getDatabase().find(SafeHorseBean.class).where()
+                        .eq("owner", player.toString()).query().findList());
                 if (!clear && horse != null) {
-                    plugin.getDatabase().save(toBean(horse));
+                    plugin.getDatabase().save(horse.toBean());
                 }
             }
             if (horse != null) {
                 horse.remove();
+                horses.remove(horse.getInstance().getUniqueId());
             }
             return true;
         }
         return false;
     }
 
+    /**
+     * Removes all horses in the registry. Called when the server goes down.
+     */
     public void removeAllHorses() {
-        for (Player p : registry.keySet()) {
+        for (UUID p : registry.keySet()) {
             removeSafeHorse(p, false);
-            registry.remove(p);
         }
     }
 
-    public static void applyBean(Horse horse, SafeHorseBean bean) {
-        horse.setCustomName(bean.getName());
-        horse.setVariant(Horse.Variant.values()[bean.getVariant()]);
-        horse.setColor(Horse.Color.values()[bean.getColor()]);
-        horse.setStyle(Horse.Style.values()[bean.getStyle()]);
-        horse.getInventory().setSaddle(new ItemStack(bean.getSaddle()));
-        horse.getInventory().setArmor(new ItemStack(bean.getArmor()));
-        horse.setAge(bean.getAge());
-        ((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(bean.getSpeed() / 10000.0);
-        horse.setJumpStrength(bean.getJump() / 10000.0);
-    }
-
-    public SafeHorseBean toBean(Horse horse) {
-        SafeHorseBean bean = new SafeHorseBean();
-        bean.setOwner(horse.getOwner().getUniqueId().toString());
-        bean.setName(horse.getCustomName());
-        bean.setVariant(horse.getVariant().ordinal());
-        bean.setColor(horse.getColor().ordinal());
-        bean.setStyle(horse.getStyle().ordinal());
-        bean.setSaddle(horse.getInventory().getSaddle() == null ? 0 : horse.getInventory().getSaddle().getTypeId());
-        bean.setArmor(horse.getInventory().getArmor() == null ? 0 : horse.getInventory().getArmor().getTypeId());
-        bean.setAge(horse.getAge());
-        bean.setSpeed((int) (((CraftHorse) horse).getHandle().getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).b() * 10000));
-        bean.setJump((int) (horse.getJumpStrength() * 10000));
-        return bean;
-    }
 }

@@ -20,11 +20,12 @@ public class SafeHorseBean {
     private int variant;
     private int color;
     private int style;
-    private int saddle;
-    private int armor;
     private int age;
     private int speed;
     private int jump;
+
+    // Serialized as JSON
+    private String inventory;
 
     public int getId() {
         return this.id;
@@ -74,22 +75,6 @@ public class SafeHorseBean {
         this.style = style;
     }
 
-    public int getSaddle() {
-        return this.saddle;
-    }
-
-    public void setSaddle(int saddle) {
-        this.saddle = saddle;
-    }
-
-    public int getArmor() {
-        return this.armor;
-    }
-
-    public void setArmor(int armor) {
-        this.armor = armor;
-    }
-
     public int getAge() {
         return this.age;
     }
@@ -112,6 +97,14 @@ public class SafeHorseBean {
     
     public void setJump(int jump) {
         this.jump = jump;
+    }
+
+    public String getInventory() {
+        return this.inventory;
+    }
+
+    public void setInventory(String inventory) {
+        this.inventory = inventory;
     }
 
 }

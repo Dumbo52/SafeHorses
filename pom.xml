@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.michaelelin</groupId>
   <artifactId>SafeHorses</artifactId>
-  <version>0.2.0</version>
+  <version>1.0.0</version>
   <name>SafeHorses</name>
   <build>
     <defaultGoal>clean package</defaultGoal>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.9-R0.1-SNAPSHOT</version>
+      <version>1.11.2-R0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.comphenix.protocol</groupId>

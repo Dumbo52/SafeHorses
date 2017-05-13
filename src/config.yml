@@ -1,5 +1,22 @@
-keep-state: true
-lock-age: true
-visible-names: true
-allow-rename: true
-migrate-uuids: false
+horses:
+  keep-state: true
+  lock-age: true
+  visible-names: true
+  sounds:
+    HORSE:
+      - ENTITY_HORSE_ANGRY
+      - ENTITY_HORSE_DEATH
+      - ENTITY_HORSE_HURT
+    DONKEY:
+      - ENTITY_DONKEY_ANGRY
+      - ENTITY_DONKEY_DEATH
+    MULE:
+      - ENTITY_DONKEY_ANGRY
+      - ENTITY_MULE_DEATH
+    UNDEAD_HORSE:
+      - ENTITY_ZOMBIE_HORSE_DEATH
+    SKELETON_HORSE:
+      - ENTITY_SKELETON_HORSE_DEATH
+    LLAMA:
+      - ENTITY_LLAMA_ANGRY
+      - ENTITY_LLAMA_DEATH
