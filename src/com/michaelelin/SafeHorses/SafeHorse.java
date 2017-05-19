@@ -41,6 +41,15 @@ public class SafeHorse {
     }
 
     /**
+     * Gets the horse's owner.
+     *
+     * @return the horse's owner
+     */
+    public Player getOwner() {
+        return owner;
+    }
+
+    /**
      * Gets the horse entity instance.
      *
      * @return the horse entity

@@ -40,13 +40,25 @@ public class HorseRegistry {
     }
 
     /**
-     * Gets the {@code SafeHorse} instance from the given player.
+     * Gets the {@code SafeHorse} instance from the given player, or
+     * {@code null} if none exists.
      *
      * @param player the player
      * @return the {@code SafeHorse} instance
      */
     public SafeHorse getSafeHorse(Player player) {
         return registry.get(player.getUniqueId());
+    }
+
+    /**
+     * Gets the {@code SafeHorse} instance from the given horse entity, or
+     * {@code null} if none exists..
+     *
+     * @param instance the horse entity
+     * @return the {@code SafeHorse} instance
+     */
+    public SafeHorse getSafeHorse(AbstractHorse instance) {
+        return horses.get(instance.getUniqueId());
     }
 
     /**

@@ -38,17 +38,20 @@ public class SafeHorsesListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event.getRightClicked() instanceof AbstractHorse && plugin.getRegistry().isSafeHorse((AbstractHorse) event.getRightClicked())) {
-            if (plugin.getRegistry().getSafeHorse(event.getPlayer()).getInstance() != event.getRightClicked()) {
-                if (event.getPlayer().hasPermission("safehorses.info")) {
-                    plugin.message(event.getPlayer(), "This horse belongs to {{" + ((AbstractHorse) event.getRightClicked()).getOwner().getName() + "}}.");
-                } else {
-                    plugin.message(event.getPlayer(), "That horse isn't yours!");
-                }
-                event.setCancelled(true);
-            } else if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NAME_TAG) {
-                if (!event.getPlayer().hasPermission("safehorses.rename")) {
+        if (event.getRightClicked() instanceof AbstractHorse) {
+            SafeHorse horse = plugin.getRegistry().getSafeHorse((AbstractHorse) event.getRightClicked());
+            if (horse != null) {
+                if (horse.getOwner() != event.getPlayer()) {
+                    if (event.getPlayer().hasPermission("safehorses.info")) {
+                        plugin.message(event.getPlayer(), "This horse belongs to {{" + horse.getOwner().getName() + "}}.");
+                    } else {
+                        plugin.message(event.getPlayer(), "That horse isn't yours!");
+                    }
                     event.setCancelled(true);
+                } else if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.NAME_TAG) {
+                    if (!event.getPlayer().hasPermission("safehorses.rename")) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
