@@ -2,9 +2,9 @@ package com.michaelelin.SafeHorses;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.server.v1_11_R1.GenericAttributes;
+import net.minecraft.server.v1_12_R1.GenericAttributes;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftAbstractHorse;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftAbstractHorse;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;

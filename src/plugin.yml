@@ -3,7 +3,6 @@ main: com.michaelelin.SafeHorses.SafeHorsesPlugin
 version: ${project.version}
 description: ${project.description}
 website: ${project.url}
-database: true
 authors: [Dumbo52]
 permissions:
   safehorses.*:

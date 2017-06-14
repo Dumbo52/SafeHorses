@@ -7,6 +7,9 @@ import java.util.regex.Pattern;
 
 import javax.persistence.PersistenceException;
 
+import com.avaje.ebean.EbeanServer;
+import nu.nerd.BukkitEbean.EbeanBuilder;
+import nu.nerd.BukkitEbean.EbeanHelper;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -18,6 +21,7 @@ public class SafeHorsesPlugin extends JavaPlugin {
     private SafeHorsesConfiguration configuration;
     private HorseRegistry horseRegistry;
     private CommandDispatcher dispatcher;
+    private EbeanServer db;
 
     private static final Pattern messagePattern = Pattern.compile("\\{\\{(.*?)\\}\\}");
     private static final ChatColor primaryColor = ChatColor.GREEN;
@@ -74,16 +78,21 @@ public class SafeHorsesPlugin extends JavaPlugin {
         getLogger().info(getDescription().getName() + " " + getDescription().getVersion() + " disabled.");
     }
 
+    public EbeanServer getDatabase() {
+        return db;
+    }
+
     private void setupDatabase() {
+        db = new EbeanBuilder(this).setClasses(getDatabaseClasses()).build();
         try {
-            getDatabase().find(SafeHorseBean.class).findRowCount();
+            db.find(SafeHorseBean.class).findRowCount();
         } catch (PersistenceException e) {
             getLogger().info("Installing " + getDescription().getName() + " database.");
-            installDDL();
+
+            EbeanHelper.installDDL(db);
         }
     }
 
-    @Override
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(SafeHorseBean.class);

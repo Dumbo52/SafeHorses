@@ -5,13 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import net.minecraft.server.v1_11_R1.GenericAttributes;
-
-import org.bukkit.craftbukkit.v1_11_R1.entity.CraftHorse;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * A registry of {@code SafeHorse}s for online players.
